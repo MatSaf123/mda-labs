@@ -1,4 +1,6 @@
 from typing import List
+from pathlib import Path
+import math
 import csv
 
 
@@ -17,7 +19,7 @@ def transpose_matrix(matrix: List[List[int]]) -> List[List[int]]:
 
 
 def normalize_min_max(matrix: List[List[int]]) -> List[List[int]]:
-    """Normalize data in matrix' columns with min-max algorithm."""
+    """Normalize data in matrix' columns with min-max formula."""
     
     # Transpose input matrix
     t_matrix = transpose_matrix(matrix)
@@ -39,13 +41,42 @@ def normalize_min_max(matrix: List[List[int]]) -> List[List[int]]:
 
     return r_matrix
 
+def normalize_standardize(matrix: List[List[int]]) -> List[List[int]]:
+    """Normalize data in matrix' column with standardization formula."""
+
+    # Transpose input matrix
+    t_matrix = transpose_matrix(matrix)
+
+    # Create a r(esult)_matrix of None values with same dimensions as original matrix
+    r_matrix = [[None for _ in row] for row in t_matrix]
+
+    for i in range(len(t_matrix)):
+        row = t_matrix[i]
+        mean = sum(row)
+        
+        # Compute standard deviation for this row
+        s_d = math.sqrt(sum([math.pow(x-mean, 2) for x in row])/len(row))
+
+        for j in range(len(row)):
+            x = row[j]
+            r_matrix[i][j] = (x - mean) / s_d
+
+
+    # Transpose matrix back to it's original columns/rows state
+    r_matrix = transpose_matrix(r_matrix)
+    
+    return r_matrix 
+
+
 
 if __name__ == "__main__":
 
     data: List[List[int]] = []
 
     # Read data from csv
-    with open("data.csv") as csv_file:
+    data_path = Path("ZD_01_normalization", "data.csv").resolve()
+
+    with open(data_path) as csv_file:
         reader = csv.reader(csv_file, delimiter=",")
         for row in reader:
             data.append(row)
@@ -55,5 +86,8 @@ if __name__ == "__main__":
 
     print_matrix(matrix, "Input:")
 
-    result = normalize_min_max(matrix)
-    print_matrix(result, "Output:")
+    result_min_max = normalize_min_max(matrix)
+    print_matrix(result_min_max, "Output min-max:")
+
+    # # result_standardize = normalize_standardize(matrix)
+    # print_matrix(result_standardize, "Output standardize:")
