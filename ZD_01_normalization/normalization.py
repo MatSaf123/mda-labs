@@ -20,7 +20,7 @@ def transpose_matrix(matrix: List[List[int]]) -> List[List[int]]:
 
 def normalize_min_max(matrix: List[List[int]]) -> List[List[int]]:
     """Normalize data in matrix' columns with min-max formula."""
-    
+
     # Transpose input matrix
     t_matrix = transpose_matrix(matrix)
 
@@ -41,6 +41,7 @@ def normalize_min_max(matrix: List[List[int]]) -> List[List[int]]:
 
     return r_matrix
 
+
 def normalize_standardize(matrix: List[List[int]]) -> List[List[int]]:
     """Normalize data in matrix' column with standardization formula."""
 
@@ -52,21 +53,19 @@ def normalize_standardize(matrix: List[List[int]]) -> List[List[int]]:
 
     for i in range(len(t_matrix)):
         row = t_matrix[i]
-        mean = sum(row)
-        
+        mean = sum(row) / len(row)
+
         # Compute standard deviation for this row
-        s_d = math.sqrt(sum([math.pow(x-mean, 2) for x in row])/len(row))
+        s_d = math.sqrt(sum([math.pow(x - mean, 2) for x in row]) / len(row))
 
         for j in range(len(row)):
             x = row[j]
             r_matrix[i][j] = (x - mean) / s_d
 
-
     # Transpose matrix back to it's original columns/rows state
     r_matrix = transpose_matrix(r_matrix)
-    
-    return r_matrix 
 
+    return r_matrix
 
 
 if __name__ == "__main__":
